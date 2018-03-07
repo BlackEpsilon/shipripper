@@ -29,7 +29,8 @@ public class Player {
 	
 	public static void main(String[] args) {
 		Player p = new Player("");
-		System.out.println(p.place("A10", "C10"));
+		System.out.println(p.place("A1", "E1"));
+		System.out.println(p.place("F3", "F6"));
 		p.ausgabe();
 	}
 	
@@ -184,6 +185,10 @@ public class Player {
 		}else {
 			return -3;
 		}
+		
+		
+		length++;
+		if(length>=remainingShips.length)return -6;
 		if(remainingShips[length] <= 0)return -6;
 		return length;
 	}
