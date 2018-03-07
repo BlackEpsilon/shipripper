@@ -275,6 +275,7 @@ public class Player {
 				case 'H': temp[1]=7; break;
 				case 'I': temp[1]=8; break;
 				case 'J': temp[1]=9; break;
+				default: throw new InvalidCoordinateException();
 			}
 		}catch(Exception e) {
 			throw new InvalidCoordinateException();
