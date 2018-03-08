@@ -119,9 +119,9 @@ public class Player {
 	
 	private boolean shipsRemaining() {
 		for(int i = 0; i < remainingShips.length; i++) {
-			if(remainingShips[i] < 0)return false;
+			if(remainingShips[i] > 0)return true;
 		}
-		return true;
+		return false;
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class Player {
 	 * 			-3: Das Schiff steht schräg
 	 * 			-4: Das Schiff Kollidiert mit einem anderen
 	 * 			-5: Das Schiff ragt aus dem Spielfeld heraus
-	 * 			-6: Kein Schiff dieser Art mehr platzierbar
+	 * 			-6: Kein Schiff dieser Art mehr   
 	 */
 	private int checkPlacement(String start, String end) {
 		int[] startCoordinate = new int[2];
