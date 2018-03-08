@@ -42,7 +42,7 @@ public class Player {
 		p.ausgabe();
 	}
 	
-	
+	//
 	/**
 	 * Konstruktor
 	 * @param name: Name des Spielers
