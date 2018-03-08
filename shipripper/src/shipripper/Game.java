@@ -4,6 +4,10 @@ import java.util.Scanner;
 
 public class Game {
 	
+	public static final int STATE_PLACEMENT = 1;
+	public static final int STATE_WAITING = 2;
+	public static final int STATE_PLAYING = 3;
+	
 	private static GameServer gs;
 	private static GameClient gc;
 	private static String varName;
