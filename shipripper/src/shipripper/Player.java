@@ -36,13 +36,32 @@ public class Player {
 	}
 	
 	public static void main(String[] args) {
+		
 		Player p = new Player("");
-		p.place("A1", "A4");
+		System.out.println(p.place("A1", "A4"));
+
+		System.out.println(p.place("F3", "J3"));
+		
 		System.out.println(p.hit("A1"));
 		System.out.println(p.hit("A2"));
 		System.out.println(p.hit("A3"));
 		System.out.println(p.hit("A4"));
-		System.out.println(p.allShipsDestroyed());
+		
+
+		System.out.println(p.hit("A4"));
+		
+
+		System.out.println(p.hit("G3"));
+		System.out.println(p.hit("F3"));
+		System.out.println(p.hit("I3"));
+		System.out.println(p.hit("N3"));
+		System.out.println(p.hit("J3"));
+		System.out.println(p.hit("I3"));
+		System.out.println(p.hit("H3"));
+		
+		
+		
+		p.ausgabe();
 		
 	}
 	
@@ -57,11 +76,14 @@ public class Player {
 		field = new int[10][10];
 		for(int i=0; i<field.length; i++) {
 			for(int k=0; k<field[i].length; k++) {
-				field[i][k] = WATER;
+				set(i,k,WATER);
 			}
 		}
-
-		remainingShips = standartRemainingShips;
+		
+		remainingShips = new int[standartRemainingShips.length];
+		for(int i = 0; i < remainingShips.length; i++) {
+			remainingShips[i] = standartRemainingShips[i];
+		}
 	}
 	
 	/**
@@ -86,10 +108,10 @@ public class Player {
 			case SHIP_HIT: return HIT_ALREADY_HIT;
 			case SHIP_SUNKEN: return HIT_ALREADY_HIT;
 			case WATER: 
-				field[x][y] = WATER_HIT;
+				set(x,y,WATER_HIT);
 				return HIT_WATER;
 			case SHIP:
-				field[x][y] = SHIP_HIT;
+				set(x,y,SHIP_HIT);
 				if(!shipIntactAt(x, y)){
 					sinkShipAt(x, y);
 					if(allShipsDestroyed())return HIT_LOOSE;
@@ -105,7 +127,10 @@ public class Player {
 	 * @return
 	 */
 	private boolean allShipsDestroyed(){
-		return remainingShips == standartRemainingShips;
+		for(int i = 0; i < remainingShips.length; i++) {
+			if(remainingShips[i] != standartRemainingShips[i])return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -120,7 +145,7 @@ public class Player {
 			return;
 		}
 		
-		field[x][y] = SHIP_SUNKEN;
+		set(x,y,SHIP_SUNKEN);
 		//Länge des schiffes Zählen
 		int length = 1;
 		
@@ -139,7 +164,7 @@ public class Player {
 			return 0;
 		}
 		
-		field[x][y] = SHIP_SUNKEN;
+		set(x,y,SHIP_SUNKEN);field[x][y] = SHIP_SUNKEN;
 		
 		//länge des Schiffes Zählen
 		if(dir == 0)return sinkShipAt(x-1,y,0)+1;
@@ -353,36 +378,6 @@ public class Player {
 	private boolean set(int x, int y, int status) {
 		try {
 			field[x][y] = status;
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Setzt zustand eines Feldes
-	 * @param tile: Koordinaten des Feldes (0:X 1:Y)
-	 * @param status: Zustand, in den das Feld versezt wird
-	 */
-	private boolean set(int[] coordinates, int status) {
-		try {
-			field[coordinates[0]][coordinates[1]] = status;
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Setzt zustand eines Feldes
-	 * @param tile: String, bezeichnung des Feldes
-	 * @param status: Zustand, in den das Feld versezt wird
-	 */
-	private boolean set(String tile, int status) {
-		int[] coordinates = new int[2];
-		try {
-			coordinates = toCoordinates(tile);
-			field[coordinates[0]][coordinates[1]] = status;
 		} catch (Exception e) {
 			return false;
 		}
