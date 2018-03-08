@@ -1,5 +1,7 @@
 package shipripper;
 
+import util.InvalidCoordinateException;
+
 public class Player {
 
 	private String name;
@@ -16,6 +18,9 @@ public class Player {
 	public static final int HIT_SHIP = 1;
 	public static final int HIT_SUNKEN = 2;
 	public static final int HIT_LOOSE = 3;
+	public static final int HIT_ALREADY_HIT = 4;
+	
+	private static final int[] standartRemainingShips = {0,0,4,3,2,1};
 	
 	public void ausgabe() {
 		for(int i=0; i<field.length; i++) {
@@ -32,17 +37,16 @@ public class Player {
 	
 	public static void main(String[] args) {
 		Player p = new Player("");
-		System.out.println(p.place("A1", "A4"));
-		System.out.println(p.place("B3", "E3"));
-		p.field[0][0] = SHIP_HIT;
-		p.field[1][0] = SHIP_HIT;
-		p.field[2][0] = SHIP_HIT;
+		p.place("A1", "A4");
+		System.out.println(p.hit("A1"));
+		System.out.println(p.hit("A2"));
+		System.out.println(p.hit("A3"));
+		System.out.println(p.hit("A4"));
+		System.out.println(p.allShipsDestroyed());
 		
-		System.out.println(p.shipIntactAt(0,0));
-		p.ausgabe();
 	}
 	
-	//
+	
 	/**
 	 * Konstruktor
 	 * @param name: Name des Spielers
@@ -57,13 +61,93 @@ public class Player {
 			}
 		}
 
-		remainingShips = new int[6];
-		remainingShips[0] = 0;
-		remainingShips[1] = 0;
-		remainingShips[2] = 4;
-		remainingShips[3] = 3;
-		remainingShips[4] = 2;
-		remainingShips[5] = 1;
+		remainingShips = standartRemainingShips;
+	}
+	
+	/**
+	 * Schießt auf das angegebene Feld
+	 * @param tile: zu beschießende Feld
+	 * @return 	-1: Falsches Feld
+	 * 			-2: Ungültige koordinaten
+	 * 			andere: Konstanten HIT_*
+	 */
+	public int hit(String tile){
+		int[] temp;
+		try{
+			temp = toCoordinates(tile);
+		}catch(InvalidCoordinateException e){
+			return -2;
+		}
+		int x = temp[0];
+		int y = temp[1];
+		
+		switch(field[x][y]){
+			case WATER_HIT: return HIT_ALREADY_HIT;
+			case SHIP_HIT: return HIT_ALREADY_HIT;
+			case SHIP_SUNKEN: return HIT_ALREADY_HIT;
+			case WATER: 
+				field[x][y] = WATER_HIT;
+				return HIT_WATER;
+			case SHIP:
+				field[x][y] = SHIP_HIT;
+				if(!shipIntactAt(x, y)){
+					sinkShipAt(x, y);
+					if(allShipsDestroyed())return HIT_LOOSE;
+					return HIT_SUNKEN;
+				}
+				return HIT_SHIP;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Prueft, ob alle Schiffe zerstör wurden
+	 * @return
+	 */
+	private boolean allShipsDestroyed(){
+		return remainingShips == standartRemainingShips;
+	}
+	
+	/**
+	 * Versenkt das Schiff an den gegebenen Koordinaten und fügt es wieder den remaining ships hinzu (Alle verbundenen SHIP_HIt werden zu SHIP_SUNKEN)
+	 * @param x
+	 * @param y
+	 */
+	private void sinkShipAt(int x, int y){
+		try{
+			if(field[x][y] != SHIP_HIT)return;
+		}catch(ArrayIndexOutOfBoundsException e){
+			return;
+		}
+		
+		field[x][y] = SHIP_SUNKEN;
+		//Länge des schiffes Zählen
+		int length = 1;
+		
+		length += sinkShipAt(x-1,y,0);
+		length += sinkShipAt(x+1,y,1);
+		length += sinkShipAt(x,y-1,2);
+		length += sinkShipAt(x,y+1,3);
+		
+		remainingShips[length]++;
+	}
+	
+	private int sinkShipAt(int x, int y, int dir){
+		try{
+			if(field[x][y] != SHIP_HIT)return 0;
+		}catch(ArrayIndexOutOfBoundsException e){
+			return 0;
+		}
+		
+		field[x][y] = SHIP_SUNKEN;
+		
+		//länge des Schiffes Zählen
+		if(dir == 0)return sinkShipAt(x-1,y,0)+1;
+		else if(dir == 1)return sinkShipAt(x+1,y,1)+1;
+		else if(dir == 2)return sinkShipAt(x,y-1,2)+1;
+		else if(dir == 3)return sinkShipAt(x,y+1,3)+1;
+		
+		return 0;
 	}
 	
 	/**
@@ -80,9 +164,9 @@ public class Player {
 		}
 		
 		if(shipIntactAt(x-1,y,0))return true;
-		if(shipIntactAt(x+1,y,1))return true;
-		if(shipIntactAt(x,y-1,2))return true;
-		if(shipIntactAt(x,y+1,3))return true;
+		else if(shipIntactAt(x+1,y,1))return true;
+		else if(shipIntactAt(x,y-1,2))return true;
+		else if(shipIntactAt(x,y+1,3))return true;
 		
 		return false;
 	}
