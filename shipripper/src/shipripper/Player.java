@@ -21,7 +21,10 @@ public class Player {
 		for(int i=0; i<field.length; i++) {
 			for(int k=0; k<field[i].length; k++) {
 				if(field[k][i] == WATER)System.out.print("O");
-				else System.out.print("X");
+				else if(field[k][i] == SHIP) System.out.print("X");
+				else if(field[k][i] == SHIP_HIT) System.out.print("H");
+				else if(field[k][i] == SHIP_SUNKEN) System.out.print("S");
+				
 			}
 			System.out.println();
 		}
@@ -29,8 +32,13 @@ public class Player {
 	
 	public static void main(String[] args) {
 		Player p = new Player("");
-		System.out.println(p.place("A1", "E1"));
-		System.out.println(p.place("F3", "F6"));
+		System.out.println(p.place("A1", "A4"));
+		System.out.println(p.place("B3", "E3"));
+		p.field[0][0] = SHIP_HIT;
+		p.field[1][0] = SHIP_HIT;
+		p.field[2][0] = SHIP_HIT;
+		
+		System.out.println(p.shipIntactAt(0,0));
 		p.ausgabe();
 	}
 	
@@ -56,6 +64,50 @@ public class Player {
 		remainingShips[3] = 3;
 		remainingShips[4] = 2;
 		remainingShips[5] = 1;
+	}
+	
+	/**
+	 * Prüft, ob ein Schiff gesunken ist
+	 * @param x: X-Koordinate
+	 * @param y: Y-Koordinate
+	 * @return boolean: gesunken? (true/false)
+	 */
+	private boolean shipIntactAt(int x, int y){
+		try{
+			if(field[x][y] == SHIP)return true;
+		}catch(ArrayIndexOutOfBoundsException e){
+			return false;
+		}
+		
+		if(shipIntactAt(x-1,y,0))return true;
+		if(shipIntactAt(x+1,y,1))return true;
+		if(shipIntactAt(x,y-1,2))return true;
+		if(shipIntactAt(x,y+1,3))return true;
+		
+		return false;
+	}
+	
+	/**
+	 * Rekursive Hilfsmethode für shipIntactAt(x,y)
+	 * @param x
+	 * @param y
+	 * @param dir: Richtung, in die gesucht wird
+	 * @return
+	 */
+	private boolean shipIntactAt(int x, int y, int dir){
+		try{
+			if(field[x][y] == SHIP)return true;
+			if(field[x][y] == WATER || field[x][y] == WATER_HIT)return false;
+		}catch(ArrayIndexOutOfBoundsException e){
+			return false;
+		}
+		
+		if(dir == 0)return shipIntactAt(x-1,y,0);
+		if(dir == 1)return shipIntactAt(x+1,y,1);
+		if(dir == 2)return shipIntactAt(x,y-1,2);
+		if(dir == 3)return shipIntactAt(x,y+1,3);
+		
+		return false;
 	}
 	
 	/**
