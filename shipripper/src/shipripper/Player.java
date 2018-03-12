@@ -22,49 +22,21 @@ public class Player {
 	
 	private static final int[] standartRemainingShips = {0,0,4,3,2,1};
 	
-	public void ausgabe() {
+	public String ausgabe() {
+		String temp = "";
 		for(int i=0; i<field.length; i++) {
 			for(int k=0; k<field[i].length; k++) {
-				if(field[k][i] == WATER)System.out.print("O");
-				else if(field[k][i] == SHIP) System.out.print("X");
-				else if(field[k][i] == SHIP_HIT) System.out.print("H");
-				else if(field[k][i] == SHIP_SUNKEN) System.out.print("S");
+				if(field[k][i] == WATER)temp+="O";
+				else if(field[k][i] == WATER_HIT)temp+="X";
+				else if(field[k][i] == SHIP)temp+="+";
+				else if(field[k][i] == SHIP_HIT)temp+="%";
+				else if(field[k][i] == SHIP_SUNKEN)temp+="#";
 				
 			}
-			System.out.println();
+			temp+="\n";
 		}
+		return temp;
 	}
-	
-	public static void main(String[] args) {
-		
-		Player p = new Player("");
-		System.out.println(p.place("A1", "A4"));
-
-		System.out.println(p.place("F3", "J3"));
-		
-		System.out.println(p.hit("A1"));
-		System.out.println(p.hit("A2"));
-		System.out.println(p.hit("A3"));
-		System.out.println(p.hit("A4"));
-		
-
-		System.out.println(p.hit("A4"));
-		
-
-		System.out.println(p.hit("G3"));
-		System.out.println(p.hit("F3"));
-		System.out.println(p.hit("I3"));
-		System.out.println(p.hit("N3"));
-		System.out.println(p.hit("J3"));
-		System.out.println(p.hit("I3"));
-		System.out.println(p.hit("H3"));
-		
-		
-		
-		p.ausgabe();
-		
-	}
-	
 	
 	/**
 	 * Konstruktor
@@ -412,6 +384,10 @@ public class Player {
 			throw new InvalidCoordinateException();
 		}
 		return temp;
+	}
+	
+	public int get(int x, int y){
+		return field[x][y];
 	}
 	
 	public String getName(){
