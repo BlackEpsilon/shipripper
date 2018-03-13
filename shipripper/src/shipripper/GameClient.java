@@ -14,6 +14,7 @@ public class GameClient extends util.Client{
 		state = Game.STATE_WAITING;
 		if(!isConnected()) {
 			System.out.println("Kein Server unter " + serverIP + ":" + serverPort + " zu erreichen.");
+			return;
 		}
 		System.out.println("An Server " + serverIP + ":" + serverPort + " anmelden...");
 		send("READY " + pName);
@@ -26,7 +27,7 @@ public class GameClient extends util.Client{
 			String[] in = input.split(" ");
 			
 			if(in[0].equalsIgnoreCase("GEGNER")) {
-				send("GEGNER");
+				send("ENEMY");
 			}else if(in[0].equalsIgnoreCase("EIGEN")) {
 				System.out.println("Dein Feld:");
 				System.out.println(player.ausgabe());
@@ -55,6 +56,8 @@ public class GameClient extends util.Client{
 				send("SHOOT " + in[1]);
 			}else if(in[0].equalsIgnoreCase("QUIT")) {
 				send("QUIT " + player.getName());
+				close();
+				return;
 			}
 		}
 	}
@@ -94,15 +97,25 @@ public class GameClient extends util.Client{
 				case Player.HIT_SUNKEN: System.out.println("Eines deiner Schiffe wurde versenkt!"); return;
 				case Player.HIT_WATER: System.out.println("Dein Gegner hat das Wasser getroffen"); return;
 			}
+			player.hit(in[3]);
 		}else if(in[1].equals("WAITING")){
 			System.out.println("Warte auf mitspieler.");
 		}else if(in[1].equals("PLACE")){
 			System.out.println("Platziere deine Schiffe");
 		}else if(in[1].equals("BEGINN")){
 			System.out.println(in[2] + " beginnt!");
-		}else if(in[1].equals("NAME_INVALID")){
-			System.out.println("Suche dir einen anderen Namen!");
+		}else if(in[1].equals("REJECTED")){
+			if(in[2].equals("NAME")) {
+				System.out.println("Suche dir einen anderen Namen!");
+			}else if(in[2].equals("FULL")) {
+				System.out.println("Der Server ist voll!");
+			}
 			close();
+		}else if(in[1].equals("ENEMY")){
+			System.out.println("Gegnerisches Feld:");
+			System.out.println(pMessage.substring(10));
+		}else if(in[1].equals("QUIT")){
+			System.out.println(in[2] + " gibt auf!");
 		}
 	}
 

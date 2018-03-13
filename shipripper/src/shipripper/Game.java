@@ -10,7 +10,6 @@ public class Game {
 	
 	private static GameServer gs;
 	private static GameClient gc;
-	private static String varName;
 
 	public Game() {
 		// TODO Auto-generated constructor stub
@@ -18,13 +17,12 @@ public class Game {
 
 	public static void main(String[] args) {
 		
-		initiateGame(args[0]);
+//		initiateGame(args[0]);
 		
-		System.out.println("Player Name:");
-		Scanner mscanner = new Scanner(System.in);
-		String pName = mscanner.nextLine();
-		varName = pName;
-		mscanner.close();
+		
+		
+		initiateGame("play");
+		
 
 	}
 	
@@ -45,18 +43,21 @@ public class Game {
 	private static void createClient() {
 		
 		Scanner scanner = new Scanner(System.in);
-		String pName = scanner.nextLine();
 		System.out.println("Server IP:");			
 		String serverIP = scanner.nextLine();
 		System.out.println("Server Port:");
 		String serverPortS = scanner.nextLine();
 		int serverPort = Integer.parseInt(serverPortS);
-		gc = new GameClient(serverIP, serverPort, pName);
+		createClient(serverIP, serverPort);
 		scanner.close();
 	} 
 	
 	private static void createClient(String pIP, int pPort) {
-		gc = new GameClient(pIP, pPort, varName);
+		System.out.println("Player Name:");
+		Scanner mscanner = new Scanner(System.in);
+		String pName = mscanner.nextLine();
+		mscanner.close();
+		gc = new GameClient(pIP, pPort, pName);
 	}
 	
 	public static void createServer(int pPort) {

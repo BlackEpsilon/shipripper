@@ -38,6 +38,22 @@ public class Player {
 		return temp;
 	}
 	
+	public String ausgabeFuerGegner() {
+		String temp = "";
+		for(int i=0; i<field.length; i++) {
+			for(int k=0; k<field[i].length; k++) {
+				if(field[k][i] == WATER)temp+="O";
+				else if(field[k][i] == WATER_HIT)temp+="X";
+				else if(field[k][i] == SHIP)temp+="O";
+				else if(field[k][i] == SHIP_HIT)temp+="%";
+				else if(field[k][i] == SHIP_SUNKEN)temp+="#";
+				
+			}
+			temp+="\n";
+		}
+		return temp;
+	}
+	
 	/**
 	 * Konstruktor
 	 * @param name: Name des Spielers
@@ -347,7 +363,7 @@ public class Player {
 	 * @param x/y: Koordinaten des Feldes (X/Y)
 	 * @param status: Zustand, in den das Feld versezt wird
 	 */
-	private boolean set(int x, int y, int status) {
+	public boolean set(int x, int y, int status) {
 		try {
 			field[x][y] = status;
 		} catch (Exception e) {
